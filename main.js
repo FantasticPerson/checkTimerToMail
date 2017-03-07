@@ -1,4 +1,5 @@
 'use strict';
+var encodeURL = require('encodeurl')
 var mailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 var schedule = require("node-schedule");
@@ -58,7 +59,7 @@ Main.prototype = {
 		this.taskerStart();
 	},
 	//发送邮件
-	sendMsgTo: function(subject,specifyMsg,indexUrl,msg,mails=null) {
+	sendMsgTo: function(subject,specifyMsg,indexUrl,msg) {
 		console.log(msg);
 		//tqqqwxiqzwvujadh pop3
 		//hlfpxlodlwpgigii imap
@@ -91,11 +92,10 @@ Main.prototype = {
 	sendPhoneMsgTo:function(msg){
 		var baseUrl = 'http://10.101.2.71:8999/CallSMSPlatform/sendMsg';
 		var phoneArr = ['13818184608'];//'17798860825','18994295576','15962847365'
-        var url = baseUrl+'?phoneNum='+phoneArr.join(';')+'&msgContent=';
+        var url = baseUrl+'?phoneNum='+phoneArr.join(';')+'&msgContent='+encodeURL(msg);
 		request(url,function(error,response,body){
-			if(error){
-				console.log('send sms fail:'+error);
-                this.sendMsgTo('发送短信失败','fail','','','3122859003@qq.com,1240172019@qq.com');
+			if(error || response.statusCode != 200){
+				console.log('send sms fail');
 			}
         })
 	}
